@@ -16,7 +16,7 @@
         <div id=calc class="desktop-icon-container">
             
           <div class="thumbnail-row"> 
-          <img class="folder-thumbnail" src="./imgs/calc3.png"/>
+          <img class="folder-thumbnail" src="imgs/calc3.png"/>
           </div>
           <div class="desktop-icon-label">
 
@@ -28,7 +28,7 @@
         <div id=graph class="desktop-icon-container">
 
         <div class="thumbnail-row"> 
-        <img class="folder-thumbnail" src="./imgs/graph3.png"/>
+        <img class="folder-thumbnail" src="imgs/graph3.png"/>
         </div>
         <div class="desktop-icon-label">
 
@@ -43,7 +43,7 @@
     <div id="calcwinheader" class="window-header"> 
       <p class="window-title-text">
         <div class="window-icon-container">
-          <img class="window-icon" src="./imgs/calc3.png"/>
+          <img class="window-icon" src="imgs/calc3.png"/>
           </div>
          mudae calculator 
          <div class="button-container">
@@ -198,7 +198,7 @@
     <div id="graphwinheader" class="window-header"> 
       <p class="window-title-text">
         <div class="window-icon-container">
-          <img class="window-icon" src="./imgs/graph3.png"/>
+          <img class="window-icon" src="imgs/graph3.png"/>
           </div>
          mudae graph 
          <div class="button-container">
@@ -250,76 +250,62 @@
     </div>
 
   </footer>
-  <script>
-const API_BASE = "https://3.15.18.191:8000";
+  <script type="module">
+    import { defaultStats, computeEffectiveStats, calculateOdds } from './odds.js';
 
-document.getElementById("calcBtn").addEventListener("click", () => {
+    const calcBtn = document.getElementById("calcBtn");
+    calcBtn.addEventListener("click", () => {
+      const disabled_cards = Number(document.getElementById("disabledInput").value) || 0;
+      const cards_left = Number(document.getElementById("leftInput").value) || defaultStats().cards_left;
+      const tuto_lvl = Number(document.getElementById("tutoInput").value) || 0;
+      const og_server = document.getElementById("og-check").checked;
+      const persrare = Number(document.getElementById("persrare").value) || 1;
 
-    const disabled_cards = parseInt(document.getElementById("disabledInput").value);
-    const cards_left = parseInt(document.getElementById("leftInput").value);
-    const tuto_lvl = parseInt(document.getElementById("tutoInput").value);
-    const og_server = document.getElementById("og-check").checked ? 1 : 0;
-    const persrare = parseInt(document.getElementById("persrare").value); 
-
-    function getRadio(name) {
+      const getRadio = (name) => {
         const el = document.querySelector(`input[name="${name}"]:checked`);
-        return el ? parseInt(el.value) : 0;
-    }
+        return el ? Number(el.value) : 0;
+      };
 
-    const Bronze = getRadio("Bronze");
-    const Silver = getRadio("Silver");
-    const Gold = getRadio("Gold");
-    const Sapphire = getRadio("Sapphire");
-    const Ruby = getRadio("Ruby");
+      const upgrades = {
+        Bronze: getRadio("Bronze"),
+        Silver: getRadio("Silver"),
+        Gold: getRadio("Gold"),
+        Sapphire: getRadio("Sapphire"),
+        Ruby: getRadio("Ruby"),
+      };
 
-    // Build the form data
-    const formData = new FormData();
-    formData.append("Bronze", Bronze);
-    formData.append("Silver", Silver);
-    formData.append("Gold", Gold);
-    formData.append("Sapphire", Sapphire);
-    formData.append("Ruby", Ruby);
+      const base = {
+        ...defaultStats(),
+        disabled_cards,
+        cards_left,
+        tuto_lvl,
+        persrare,
+        og_server,
+      };
 
-    formData.append("disabled_cards", disabled_cards);
-    formData.append("cards_left", cards_left);
-    formData.append("og_server", og_server);
-    formData.append("tuto_lvl", tuto_lvl);
-    formData.append("persrare", persrare);
+      const stats = computeEffectiveStats(base, upgrades);
+      const odds = calculateOdds(stats);
 
-    fetch(API_BASE , {
-        method: "POST",
-        body: formData
-    })
-        .then(res => res.json())
-        .then(data => {
-            console.log("FastAPI response:", data);
-
-            const stats = data.upgraded_stats;
-            const bonusLabel = document.getElementById("bonus-label");
-            const odds = data.odds;
-            const oddsLabel = document.getElementById("odds-label");
-            bonusLabel.innerHTML = `
-                <h3>Bonus Stats:</h3>
-                <p><b>Rolls/hr:</b> ${stats.rolls}</p>
-                <p><b>Wish Slots:</b> ${stats.w_slots}</p>
-                <p><b>Wish Boost:</b> ${stats.w_boost}%</p>
-                <p><b>Star Wish Slots:</b> ${stats.sw_slots}</p>
-                <p><b>Star Wish Boost:</b> ${stats.sw_boost}%</p>
-                <p><b>Cards Claimed:</b> ${stats.cards_claimed}</p>
-            `
-            oddsLabel.innerHTML = `
-                <h3>Odds</h3>
-                <p><b>Specific Roll Odds:</b> ${(odds.specific_roll_odds * 100).toFixed(5)}%</p>
-                <p><b>Specific Wish Odds:</b> ${(odds.specific_wish_odds * 100).toFixed(5)}%</p>
-                <p><b>Total Wish Odds:</b> ${(odds.wish_odds * 100).toFixed(5)}%</p>
-                <p><b>Star Wish Odds:</b> ${(odds.star_wish_odds * 100).toFixed(5)}%</p>
-                <p><b>Kakera Spawn Odds:</b> ${(odds.kspawn_odds * 100).toFixed(5)}%</p>
-`;
-        })
-        .catch(err => console.error("Fetch error:", err));
+      const bonusLabel = document.getElementById("bonus-label");
+      const oddsLabel = document.getElementById("odds-label");
+      bonusLabel.innerHTML = `
+          <h3>Bonus Stats:</h3>
+          <p><b>Rolls/hr:</b> ${stats.rolls}</p>
+          <p><b>Wish Slots:</b> ${stats.w_slots}</p>
+          <p><b>Wish Boost:</b> ${stats.w_boost}%</p>
+          <p><b>Star Wish Slots:</b> ${stats.sw_slots}</p>
+          <p><b>Star Wish Boost:</b> ${stats.sw_boost}%</p>
+          <p><b>Cards Claimed:</b> ${stats.cards_claimed}</p>
+      `;
+      oddsLabel.innerHTML = `
+          <h3>Odds</h3>
+          <p><b>Specific Roll Odds:</b> ${(odds.specific_roll_odds * 100).toFixed(5)}%</p>
+          <p><b>Specific Wish Odds:</b> ${(odds.specific_wish_odds * 100).toFixed(5)}%</p>
+          <p><b>Total Wish Odds:</b> ${(odds.wish_odds * 100).toFixed(5)}%</p>
+          <p><b>Star Wish Odds:</b> ${(odds.star_wish_odds * 100).toFixed(5)}%</p>
+          <p><b>Kakera Spawn Odds:</b> ${(odds.kspawn_odds * 100).toFixed(5)}%</p>
+      `;
     });
-
-
 
     var MC = document.getElementsByClassName('desktop-icon-container')[0];
     var MG = document.getElementsByClassName('desktop-icon-container')[1];
@@ -395,5 +381,3 @@ function dragElement(elmnt) {
   </script>
 </body>
 </html>
-
-
