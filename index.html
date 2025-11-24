@@ -251,6 +251,7 @@
 
   </footer>
   <script>
+const API_BASE = "http://3.15.18.191:8000";
 
 document.getElementById("calcBtn").addEventListener("click", () => {
 
@@ -285,7 +286,7 @@ document.getElementById("calcBtn").addEventListener("click", () => {
     formData.append("tuto_lvl", tuto_lvl);
     formData.append("persrare", persrare);
 
-    fetch("http://127.0.0.1:8000/apply_upgrades", {
+    fetch(API_BASE , {
         method: "POST",
         body: formData
     })
