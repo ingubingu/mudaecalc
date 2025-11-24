@@ -1,0 +1,5 @@
+fastapi
+uvicorn[standard]
+mangum
+python-multipart
+boto3
