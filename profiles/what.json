@@ -1,0 +1,22 @@
+{
+    "stats": {
+        "rolls": 16,
+        "w_slots": 9,
+        "sw_slots": 1,
+        "w_boost": 100.0,
+        "sw_boost": 0.0,
+        "disabled_cards": 4,
+        "cards_left": 36537,
+        "cards_claimed": 7311,
+        "kp_limit": 100,
+        "kp_usage": 40,
+        "kp_bonus": 0
+    },
+    "upgrades": {
+        "Bronze": 2,
+        "Silver": 2,
+        "Gold": 4,
+        "Sapphire": 4,
+        "Ruby": 4
+    }
+}

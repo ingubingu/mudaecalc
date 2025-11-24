@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Mudae OS</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+
+
+
+  <div class="desktop-icon-grid">
+
+        <div id=calc class="desktop-icon-container">
+            
+          <div class="thumbnail-row"> 
+          <img class="folder-thumbnail" src="\imgs\calc3.png"/>
+          </div>
+          <div class="desktop-icon-label">
+
+            mudae calculator
+
+        </div>
+      </div>
+
+        <div id=graph class="desktop-icon-container">
+
+        <div class="thumbnail-row"> 
+        <img class="folder-thumbnail" src="\imgs\graph3.png"/>
+        </div>
+        <div class="desktop-icon-label">
+
+            mudae graph
+
+        </div>
+      </div>
+
+  </div>
+
+  <div id="calcwin" class="window-container"> 
+    <div id="calcwinheader" class="window-header"> 
+      <p class="window-title-text">
+        <div class="window-icon-container">
+          <img class="window-icon" src="\imgs\calc3.png"/>
+          </div>
+         mudae calculator 
+         <div class="button-container">
+        <button onclick='calcwin.style.visibility = "hidden"' class="close-button">X</button>
+        <button class="maximize-button">&#9744;</button> 
+        <button class="minimize-button">-</button> 
+        </div>
+      </p>
+
+    
+    </div>
+      <div class="window-body-container">
+        <div class="window-subheading">
+          <p class="window-subheading-text">input your mudae stats below</p>
+        </div>
+        <div class="body-content">
+          <div class="input-row-container">
+          <div class="input-row">
+            <p class="input-label"># Disabled</p>
+            <input id="disabledInput" type="text" class="input-box" placeholder="36537"/>
+          </div>
+          <div class="input-row">
+            <p class="input-label"># Left</p>
+            <input id="leftInput" type="text" class="input-box" placeholder="43234"/>
+          </div>
+          <div class="input-row">
+            <p class="input-label">Tuto level</p>
+            <input id="tutoInput" type="text" class="input-box" placeholder="0-22"/>
+          </div>
+          </div>
+
+          
+          
+          <div class="radio-row">
+            <p class="radio-option-tag">Bronze</p>
+            <div class="radio-options-group">
+          <label for="b1" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="b1" name="Bronze" value="1"> 1
+          </label>
+          <label for="b2" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="b2" name="Bronze" value="2"> 2
+          </label>
+          <label for="b3" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="b3" name="Bronze" value="3"> 3
+          </label>
+          <label for="b4" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="b4" name="Bronze" value="4"> 4
+          </label>
+            </div>
+        </div>
+
+        <div class="radio-row">
+            <p class="radio-option-tag">Silver</p>
+          <div class="radio-options-group">
+          <label for="s1" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="s1" name="Silver" value="1"> 1
+          </label>
+          <label for="s2" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="s2" name="Silver" value="2"> 2
+          </label>
+          <label for="s3" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="s3" name="Silver" value="3"> 3
+          </label>
+          <label for="s4" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="s4" name="Silver" value="4"> 4
+          </label>
+            </div>
+        </div>
+
+        <div class="radio-row">
+            <p class="radio-option-tag">Gold</p>
+          <div class="radio-options-group">
+          <label for="g1" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="g1" name="Gold" value="1"> 1
+          </label>
+          <label for="g2" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="g2" name="Gold" value="2"> 2
+          </label>
+          <label for="g3" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="g3" name="Gold" value="3"> 3
+          </label>
+          <label for="g4" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="g4" name="Gold" value="4"> 4
+          </label>
+            </div>
+        </div>
+
+        <div class="radio-row">
+            <p class="radio-option-tag">Sapphire</p>
+          <div class="radio-options-group">
+          <label for="sp1" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="sp1" name="Sapphire" value="1"> 1
+          </label>
+          <label for="sp2" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="sp2" name="Sapphire" value="2"> 2
+          </label>
+          <label for="sp3" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="sp3" name="Sapphire" value="3"> 3
+          </label>
+          <label for="sp4" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="sp4" name="Sapphire" value="4"> 4
+          </label>
+        </div>
+        </div>
+
+        <div class="radio-row">
+            <p class="radio-option-tag">Ruby</p>
+          <div class="radio-options-group">
+          <label for="r1" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="r1" name="Ruby" value="1"> 1
+          </label>
+          <label for="r2" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="r2" name="Ruby" value="2"> 2
+          </label>
+          <label for="r3" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="r3" name="Ruby" value="3"> 3
+          </label>
+          <label for="r4" class = "radio-option-label">
+            <input class="radio-option-button" type="radio" id="r4" name="Ruby" value="4"> 4
+          </label>
+        </div>
+        </div>
+        <div>
+          <div class="bottom-row-container">
+            <div class="og-check-container">
+              <p class="og-check-label">OG serv?</p>
+              <input id="og-check" class="check-box" type="checkbox" value="">
+              <label for="persrare">persrare:</label>
+              <select id="persrare" name="persrare" class="dropdown-menu">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+              </select>
+          </div>  
+          <div class="calculate-button-container">
+            <button id="calcBtn" class="calculate-button">Calculate</button>
+            </div>
+          </div>
+        </div>
+          
+      </div>
+
+
+
+
+
+
+
+  </div>
+  </div>
+  <div id="graphwin" class="window-container"> 
+    <div id="graphwinheader" class="window-header"> 
+      <p class="window-title-text">
+        <div class="window-icon-container">
+          <img class="window-icon" src="\imgs\graph3.png"/>
+          </div>
+         mudae graph 
+         <div class="button-container">
+        <button onclick='graphwin.style.visibility = "hidden"' class="close-button">X</button>
+        <button class="maximize-button">&#9744;</button> 
+        <button class="minimize-button">-</button> 
+        </div>
+      </p>
+
+    
+    </div>
+      <div class="window-body-container">
+        <div class="window-subheading">
+          <p class="window-subheading-text">Check out those stats!</p>
+        </div>
+        <div class="body-content">
+          <div class="graph-content-container">
+            <p>            Graph go up!!!
+            </p>
+          </div>
+          <div class="stat-content-container">
+            <div id='bonus-label' class="bonus-label">
+              Bonus Stats:
+            </div>
+            <div id="odds-label" class="odds-label">
+
+                Your odds are:
+
+          </div>
+      </div>
+  </div>
+  </div>
+  </div>
+  <footer>
+
+    <div class="taskbar">
+      <div class="start-button">
+
+        <img class="start-icon" src="\imgs\start.png"/>
+
+      </div>
+
+      <div class="taskbar-time">
+
+        12:00 PM
+
+      </div>
+
+    </div>
+
+  </footer>
+  <script>
+
+document.getElementById("calcBtn").addEventListener("click", () => {
+
+    const disabled_cards = parseInt(document.getElementById("disabledInput").value);
+    const cards_left = parseInt(document.getElementById("leftInput").value);
+    const tuto_lvl = parseInt(document.getElementById("tutoInput").value);
+    const og_server = document.getElementById("og-check").checked ? 1 : 0;
+    const persrare = parseInt(document.getElementById("persrare").value); 
+
+    function getRadio(name) {
+        const el = document.querySelector(`input[name="${name}"]:checked`);
+        return el ? parseInt(el.value) : 0;
+    }
+
+    const Bronze = getRadio("Bronze");
+    const Silver = getRadio("Silver");
+    const Gold = getRadio("Gold");
+    const Sapphire = getRadio("Sapphire");
+    const Ruby = getRadio("Ruby");
+
+    // Build the form data
+    const formData = new FormData();
+    formData.append("Bronze", Bronze);
+    formData.append("Silver", Silver);
+    formData.append("Gold", Gold);
+    formData.append("Sapphire", Sapphire);
+    formData.append("Ruby", Ruby);
+
+    formData.append("disabled_cards", disabled_cards);
+    formData.append("cards_left", cards_left);
+    formData.append("og_server", og_server);
+    formData.append("tuto_lvl", tuto_lvl);
+    formData.append("persrare", persrare);
+
+    fetch("http://127.0.0.1:8000/apply_upgrades", {
+        method: "POST",
+        body: formData
+    })
+        .then(res => res.json())
+        .then(data => {
+            console.log("FastAPI response:", data);
+
+            const stats = data.upgraded_stats;
+            const bonusLabel = document.getElementById("bonus-label");
+            const odds = data.odds;
+            const oddsLabel = document.getElementById("odds-label");
+            bonusLabel.innerHTML = `
+                <h3>Bonus Stats:</h3>
+                <p><b>Rolls/hr:</b> ${stats.rolls}</p>
+                <p><b>Wish Slots:</b> ${stats.w_slots}</p>
+                <p><b>Wish Boost:</b> ${stats.w_boost}%</p>
+                <p><b>Star Wish Slots:</b> ${stats.sw_slots}</p>
+                <p><b>Star Wish Boost:</b> ${stats.sw_boost}%</p>
+                <p><b>Cards Claimed:</b> ${stats.cards_claimed}</p>
+            `
+            oddsLabel.innerHTML = `
+                <h3>Odds</h3>
+                <p><b>Specific Roll Odds:</b> ${(odds.specific_roll_odds * 100).toFixed(5)}%</p>
+                <p><b>Specific Wish Odds:</b> ${(odds.specific_wish_odds * 100).toFixed(5)}%</p>
+                <p><b>Total Wish Odds:</b> ${(odds.wish_odds * 100).toFixed(5)}%</p>
+                <p><b>Star Wish Odds:</b> ${(odds.star_wish_odds * 100).toFixed(5)}%</p>
+                <p><b>Kakera Spawn Odds:</b> ${(odds.kspawn_odds * 100).toFixed(5)}%</p>
+`;
+        })
+        .catch(err => console.error("Fetch error:", err));
+    });
+
+
+
+    var MC = document.getElementsByClassName('desktop-icon-container')[0];
+    var MG = document.getElementsByClassName('desktop-icon-container')[1];
+    var SB = document.getElementsByClassName('start-button')[0];
+    MC.addEventListener('click', iconClickHandler);
+    MG.addEventListener('click', iconClickHandler);
+    SB.addEventListener('click', iconClickHandler);
+    function iconClickHandler(event) {
+      var id = event.currentTarget.id;
+      if (id === 'calc') {
+        var calcwin = document.getElementById('calcwin');
+        if (calcwin.style.visibility === 'visible') {
+          calcwin.style.visibility = 'hidden';
+          return;
+        } else if (calcwin.style.visibility === 'hidden' || calcwin.style.visibility === '') {
+          calcwin.style.visibility = 'visible';
+        }
+
+      }
+            if (id === 'graph') {
+        var graphwin = document.getElementById('graphwin');
+        if (graphwin.style.visibility === 'visible') {
+          graphwin.style.visibility = 'hidden';
+          return;
+        } else if (graphwin.style.visibility === 'hidden' || graphwin.style.visibility === '') {
+          graphwin.style.visibility = 'visible';
+        }
+
+      }
+    }
+    let topZ = 100;
+    dragElement(document.getElementById("calcwin"));
+    dragElement(document.getElementById("graphwin"));
+
+
+function dragElement(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  // bring to front when clicked
+  elmnt.addEventListener("mousedown", () => {
+    topZ++;
+    elmnt.style.zIndex = topZ;
+  });
+
+  const header = document.getElementById(elmnt.id + "header");
+  (header || elmnt).onmousedown = dragMouseDown;
+
+  function dragMouseDown(e) {
+    e.preventDefault();
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e.preventDefault();
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
+  </script>
+</body>
+</html>
