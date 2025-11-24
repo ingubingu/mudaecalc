@@ -16,7 +16,7 @@ p {
 }
 
 body {
-      background-image: url("imgs/patterndither.png");
+      background-image: url("./imgs/patterndither.png");
       background-repeat: no-repeat; 
       background-size: cover; 
       background-position: left;
