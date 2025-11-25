@@ -215,9 +215,11 @@
           <p class="window-subheading-text">Check out those stats!</p>
         </div>
         <div class="body-content">
-          <div class="graph-content-container">
-            <p>            Graph go up!!!
-            </p>
+          <div class="graph-content-container" style="margin-bottom: 2rem;">
+            <canvas id="noWishChart" width="600" height="230"></canvas>
+            <div class="graph-caption">
+              <p><b>Wish likelihood</b> after N rolls (higher is better). Orange = base, Blue = upgraded.</p>
+            </div>
           </div>
           <div class="stat-content-container">
             <div id='bonus-label' class="bonus-label">
@@ -250,10 +252,96 @@
     </div>
 
   </footer>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module">
     import { defaultStats, computeEffectiveStats, calculateOdds } from './odds.js';
+    const taskbarTime = document.querySelector(".taskbar-time");
+
+    const updateTaskbarTime = () => {
+      const now = new Date();
+      taskbarTime.textContent = now.toLocaleTimeString([], {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      });
+    };
+
+    updateTaskbarTime();
+    setInterval(updateTaskbarTime, 1000);
 
     const calcBtn = document.getElementById("calcBtn");
+    let chart;
+
+    function buildCurve(stats, target = 0.99, maxRolls = 2000) {
+      const odds = calculateOdds(stats);
+      const p = Math.min(1, Math.max(0, odds.wish_odds + odds.star_wish_odds));
+      if (p <= 0) return [{ rolls: 1, atleast: 0 }];
+
+      const curve = [];
+      let rolls = 0;
+      let atleast = 0;
+      while (rolls < maxRolls && atleast < target) {
+        rolls += 1;
+        atleast = 1 - Math.pow(1 - p, rolls);
+        curve.push({ rolls, atleast });
+      }
+      return curve;
+    }
+
+    function updateChart(baseStats, upgradedStats) {
+      const baseCurve = buildCurve(baseStats);
+      const upCurve = buildCurve(upgradedStats);
+
+      const maxLen = Math.max(baseCurve.length, upCurve.length);
+      const labels = Array.from({ length: maxLen }, (_, i) => i + 1);
+
+      const baseData = labels.map((_, i) => baseCurve[i] ? baseCurve[i].atleast : null);
+      const upData = labels.map((_, i) => upCurve[i] ? upCurve[i].atleast : null);
+
+      const data = {
+        labels,
+        datasets: [
+          { label: "Base: ≥1 wish", data: baseData, borderColor: "#f39c12", borderWidth: 2, tension: 0.2, fill: false },
+          { label: "Upgraded: ≥1 wish", data: upData, borderColor: "#3498db", borderWidth: 2, tension: 0.2, borderDash: [6, 3], fill: false },
+        ],
+      };
+
+      if (!chart) {
+        const ctx = document.getElementById("noWishChart").getContext("2d");
+        chart = new Chart(ctx, {
+          type: "line",
+          data,
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            elements: { point: { radius: 0, hitRadius: 6, hoverRadius: 5 } },
+            interaction: { mode: "index", intersect: false },
+            scales: {
+              y: {
+                min: 0,
+                max: 1,
+                ticks: { color: "#ffffff", callback: v => `${(v * 100).toFixed(0)}%` },
+                grid: { color: "rgba(255,255,255,0.15)" },
+                title: { display: true, text: "Chance", color: "#ffffff" },
+              },
+              x: {
+                title: { display: true, text: "Rolls", color: "#ffffff" },
+                ticks: { color: "#ffffff" },
+                grid: { color: "rgba(255,255,255,0.12)" },
+              },
+            },
+            plugins: {
+              legend: { position: "bottom", labels: { color: "#ffffff" } },
+              tooltip: { backgroundColor: "#111111", titleColor: "#ffffff", bodyColor: "#ffffff" },
+            },
+          },
+        });
+      } else {
+        chart.data = data;
+        chart.update();
+      }
+    }
+
     calcBtn.addEventListener("click", () => {
       const disabled_cards = Number(document.getElementById("disabledInput").value) || 0;
       const cards_left = Number(document.getElementById("leftInput").value) || defaultStats().cards_left;
@@ -283,6 +371,7 @@
         og_server,
       };
 
+      const baseStats = computeEffectiveStats(base, {});
       const stats = computeEffectiveStats(base, upgrades);
       const odds = calculateOdds(stats);
 
@@ -295,16 +384,18 @@
           <p><b>Wish Boost:</b> ${stats.w_boost}%</p>
           <p><b>Star Wish Slots:</b> ${stats.sw_slots}</p>
           <p><b>Star Wish Boost:</b> ${stats.sw_boost}%</p>
-          <p><b>Cards Claimed:</b> ${stats.cards_claimed}</p>
+
       `;
       oddsLabel.innerHTML = `
-          <h3>Odds</h3>
+          <h3 class>Odds</h3>
           <p><b>Specific Roll Odds:</b> ${(odds.specific_roll_odds * 100).toFixed(5)}%</p>
           <p><b>Specific Wish Odds:</b> ${(odds.specific_wish_odds * 100).toFixed(5)}%</p>
           <p><b>Total Wish Odds:</b> ${(odds.wish_odds * 100).toFixed(5)}%</p>
           <p><b>Star Wish Odds:</b> ${(odds.star_wish_odds * 100).toFixed(5)}%</p>
-          <p><b>Kakera Spawn Odds:</b> ${(odds.kspawn_odds * 100).toFixed(5)}%</p>
+          <p><b>Total per-roll wish hit:</b> ${((odds.wish_odds + odds.star_wish_odds) * 100).toFixed(5)}%</p>
       `;
+
+      updateChart(baseStats, stats);
     });
 
     var MC = document.getElementsByClassName('desktop-icon-container')[0];

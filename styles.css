@@ -377,9 +377,26 @@ p.window-subheading-text {
     margin: 1rem;
   padding: 1rem;
   width: 400px;
-  height: 200px;
-  background-color: var(--midtone1_1);
-  margin-bottom: 10px;
+  height: 400px;
+  background-color: var(--shadow);
+  border: 2px solid var(--border);
+  box-sizing: border-box;
+  overflow: hidden;
+  padding-bottom: 1rem;
+}
+
+.graph-content-container canvas {
+  width: 100% !important;
+  height: 300px !important;
+  display: block;
+  margin: 10 auto;
+}
+
+.graph-caption {
+  text-align: center;
+  color: #ffffff;
+  padding-top: 0.5rem;
+  margin: 0;
 }
 
 .stat-content-container {
@@ -392,6 +409,7 @@ p.window-subheading-text {
   height: 200px;
   background-color: var(--midtone1);
   user-select: none;
+  gap: 1rem;
 
 }
 
