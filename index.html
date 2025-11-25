@@ -218,7 +218,7 @@
           <div class="graph-content-container" style="margin-bottom: 2rem;">
             <canvas id="noWishChart" width="600" height="230"></canvas>
             <div class="graph-caption">
-              <p><b>Wish likelihood</b> after N rolls (higher is better). Orange = base, Blue = upgraded.</p>
+              <p><b>Wish likelihood</b> after N rolls (higher is better). Orange = base (with disables), Teal = base (no disables), Blue = upgraded.</p>
             </div>
           </div>
           <div class="stat-content-container">
@@ -288,21 +288,24 @@
       return curve;
     }
 
-    function updateChart(baseStats, upgradedStats) {
+    function updateChart({ baseStats, baseWithoutDisabledStats = baseStats, upgradedStats }) {
       const baseCurve = buildCurve(baseStats);
+      const baseNoDisableCurve = buildCurve(baseWithoutDisabledStats);
       const upCurve = buildCurve(upgradedStats);
 
-      const maxLen = Math.max(baseCurve.length, upCurve.length);
+      const maxLen = Math.max(baseCurve.length, baseNoDisableCurve.length, upCurve.length);
       const labels = Array.from({ length: maxLen }, (_, i) => i + 1);
 
       const baseData = labels.map((_, i) => baseCurve[i] ? baseCurve[i].atleast : null);
+      const baseNoDisableData = labels.map((_, i) => baseNoDisableCurve[i] ? baseNoDisableCurve[i].atleast : null);
       const upData = labels.map((_, i) => upCurve[i] ? upCurve[i].atleast : null);
 
       const data = {
         labels,
         datasets: [
-          { label: "Base: ≥1 wish", data: baseData, borderColor: "#f39c12", borderWidth: 2, tension: 0.2, fill: false },
-          { label: "Upgraded: ≥1 wish", data: upData, borderColor: "#3498db", borderWidth: 2, tension: 0.2, borderDash: [6, 3], fill: false },
+          { label: "Base (with disables)", data: baseData, borderColor: "#f39c12", borderWidth: 2, tension: 0.2, fill: false },
+          { label: "Base (no disables)", data: baseNoDisableData, borderColor: "#1abc9c", borderWidth: 2, tension: 0.2, borderDash: [4, 2], fill: false },
+          { label: "Upgraded", data: upData, borderColor: "#3498db", borderWidth: 2, tension: 0.2, borderDash: [6, 3], fill: false },
         ],
       };
 
@@ -372,6 +375,7 @@
       };
 
       const baseStats = computeEffectiveStats(base, {});
+      const baseWithoutDisabledStats = computeEffectiveStats({ ...base, disabled_cards: 0 }, {});
       const stats = computeEffectiveStats(base, upgrades);
       const odds = calculateOdds(stats);
 
@@ -395,7 +399,7 @@
           <p><b>Total per-roll wish hit:</b> ${((odds.wish_odds + odds.star_wish_odds) * 100).toFixed(5)}%</p>
       `;
 
-      updateChart(baseStats, stats);
+      updateChart({ baseStats, baseWithoutDisabledStats, upgradedStats: stats });
     });
 
     var MC = document.getElementsByClassName('desktop-icon-container')[0];
