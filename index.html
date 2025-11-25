@@ -215,11 +215,9 @@
           <p class="window-subheading-text">Check out those stats!</p>
         </div>
         <div class="body-content">
-          <div class="graph-content-container" style="margin-bottom: 2rem;">
-            <canvas id="noWishChart" width="600" height="230"></canvas>
-            <div class="graph-caption">
-              <p><b>Wish likelihood</b> after N rolls (higher is better). Orange = base (with disables), Teal = base (no disables), Blue = upgraded.</p>
-            </div>
+          <div class="graph-content-container">
+            <p>            Graph go up!!!
+            </p>
           </div>
           <div class="stat-content-container">
             <div id='bonus-label' class="bonus-label">
@@ -239,7 +237,7 @@
     <div class="taskbar">
       <div class="start-button">
 
-        <img class="start-icon" src="./imgs/start.png"/>
+        <img class="start-icon" src="imgs/start.png"/>
 
       </div>
 
@@ -252,155 +250,82 @@
     </div>
 
   </footer>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script type="module">
-    import { defaultStats, computeEffectiveStats, calculateOdds } from './odds.js';
-    const taskbarTime = document.querySelector(".taskbar-time");
+  <script>
+const API_BASE = "http://127.0.0.1:8000/apply_upgrades";
 
-    const updateTaskbarTime = () => {
-      const now = new Date();
-      taskbarTime.textContent = now.toLocaleTimeString([], {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      });
-    };
+function parseNumber(id, fallback = 0) {
+  const raw = document.getElementById(id).value;
+  const num = parseInt(raw, 10);
+  return Number.isFinite(num) ? num : fallback;
+}
 
-    updateTaskbarTime();
-    setInterval(updateTaskbarTime, 1000);
+function getRadio(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? parseInt(el.value, 10) : 0;
+}
 
-    const calcBtn = document.getElementById("calcBtn");
-    let chart;
+document.getElementById("calcBtn").addEventListener("click", () => {
+  // Collect upgrade levels
+  const Bronze = getRadio("Bronze");
+  const Silver = getRadio("Silver");
+  const Gold = getRadio("Gold");
+  const Sapphire = getRadio("Sapphire");
+  const Ruby = getRadio("Ruby");
 
-    function buildCurve(stats, target = 0.99, maxRolls = 2000) {
-      const odds = calculateOdds(stats);
-      const p = Math.min(1, Math.max(0, odds.wish_odds + odds.star_wish_odds));
-      if (p <= 0) return [{ rolls: 1, atleast: 0 }];
+  // Collect base stats (falling back so blanks don't break requests)
+  const disabled_cards = parseNumber("disabledInput", 0);
+  const cards_left = parseNumber("leftInput", 43848);
+  const tuto_lvl = parseNumber("tutoInput", 0);
+  const og_server = document.getElementById("og-check").checked ? 1 : 0;
+  const persrare = parseNumber("persrare", 1);
 
-      const curve = [];
-      let rolls = 0;
-      let atleast = 0;
-      while (rolls < maxRolls && atleast < target) {
-        rolls += 1;
-        atleast = 1 - Math.pow(1 - p, rolls);
-        curve.push({ rolls, atleast });
-      }
-      return curve;
-    }
+  const formData = new FormData();
+  formData.append("Bronze", Bronze);
+  formData.append("Silver", Silver);
+  formData.append("Gold", Gold);
+  formData.append("Sapphire", Sapphire);
+  formData.append("Ruby", Ruby);
+  formData.append("disabled_cards", disabled_cards);
+  formData.append("cards_left", cards_left);
+  formData.append("og_server", og_server);
+  formData.append("tuto_lvl", tuto_lvl);
+  formData.append("persrare", persrare);
 
-    function updateChart({ baseStats, baseWithoutDisabledStats = baseStats, upgradedStats }) {
-      const baseCurve = buildCurve(baseStats);
-      const baseNoDisableCurve = buildCurve(baseWithoutDisabledStats);
-      const upCurve = buildCurve(upgradedStats);
-
-      const maxLen = Math.max(baseCurve.length, baseNoDisableCurve.length, upCurve.length);
-      const labels = Array.from({ length: maxLen }, (_, i) => i + 1);
-
-      const baseData = labels.map((_, i) => baseCurve[i] ? baseCurve[i].atleast : null);
-      const baseNoDisableData = labels.map((_, i) => baseNoDisableCurve[i] ? baseNoDisableCurve[i].atleast : null);
-      const upData = labels.map((_, i) => upCurve[i] ? upCurve[i].atleast : null);
-
-      const data = {
-        labels,
-        datasets: [
-          { label: "Base (with disables)", data: baseData, borderColor: "#f39c12", borderWidth: 2, tension: 0.2, fill: false },
-          { label: "Base (no disables)", data: baseNoDisableData, borderColor: "#1abc9c", borderWidth: 2, tension: 0.2, borderDash: [4, 2], fill: false },
-          { label: "Upgraded", data: upData, borderColor: "#3498db", borderWidth: 2, tension: 0.2, borderDash: [6, 3], fill: false },
-        ],
-      };
-
-      if (!chart) {
-        const ctx = document.getElementById("noWishChart").getContext("2d");
-        chart = new Chart(ctx, {
-          type: "line",
-          data,
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            elements: { point: { radius: 0, hitRadius: 6, hoverRadius: 5 } },
-            interaction: { mode: "index", intersect: false },
-            scales: {
-              y: {
-                min: 0,
-                max: 1,
-                ticks: { color: "#ffffff", callback: v => `${(v * 100).toFixed(0)}%` },
-                grid: { color: "rgba(255,255,255,0.15)" },
-                title: { display: true, text: "Chance", color: "#ffffff" },
-              },
-              x: {
-                title: { display: true, text: "Rolls", color: "#ffffff" },
-                ticks: { color: "#ffffff" },
-                grid: { color: "rgba(255,255,255,0.12)" },
-              },
-            },
-            plugins: {
-              legend: { position: "bottom", labels: { color: "#ffffff" } },
-              tooltip: { backgroundColor: "#111111", titleColor: "#ffffff", bodyColor: "#ffffff" },
-            },
-          },
-        });
-      } else {
-        chart.data = data;
-        chart.update();
-      }
-    }
-
-    calcBtn.addEventListener("click", () => {
-      const disabled_cards = Number(document.getElementById("disabledInput").value) || 0;
-      const cards_left = Number(document.getElementById("leftInput").value) || defaultStats().cards_left;
-      const tuto_lvl = Number(document.getElementById("tutoInput").value) || 0;
-      const og_server = document.getElementById("og-check").checked;
-      const persrare = Number(document.getElementById("persrare").value) || 1;
-
-      const getRadio = (name) => {
-        const el = document.querySelector(`input[name="${name}"]:checked`);
-        return el ? Number(el.value) : 0;
-      };
-
-      const upgrades = {
-        Bronze: getRadio("Bronze"),
-        Silver: getRadio("Silver"),
-        Gold: getRadio("Gold"),
-        Sapphire: getRadio("Sapphire"),
-        Ruby: getRadio("Ruby"),
-      };
-
-      const base = {
-        ...defaultStats(),
-        disabled_cards,
-        cards_left,
-        tuto_lvl,
-        persrare,
-        og_server,
-      };
-
-      const baseStats = computeEffectiveStats(base, {});
-      const baseWithoutDisabledStats = computeEffectiveStats({ ...base, disabled_cards: 0 }, {});
-      const stats = computeEffectiveStats(base, upgrades);
-      const odds = calculateOdds(stats);
+  fetch(API_BASE, { method: "POST", body: formData })
+    .then((res) => res.json())
+    .then((data) => {
+      const stats = data.upgraded_stats;
+      const odds = data.odds;
 
       const bonusLabel = document.getElementById("bonus-label");
       const oddsLabel = document.getElementById("odds-label");
+
       bonusLabel.innerHTML = `
-          <h3>Bonus Stats:</h3>
-          <p><b>Rolls/hr:</b> ${stats.rolls}</p>
-          <p><b>Wish Slots:</b> ${stats.w_slots}</p>
-          <p><b>Wish Boost:</b> ${stats.w_boost}%</p>
-          <p><b>Star Wish Slots:</b> ${stats.sw_slots}</p>
-          <p><b>Star Wish Boost:</b> ${stats.sw_boost}%</p>
-
+        <h3>Bonus Stats:</h3>
+        <p><b>Rolls/hr:</b> ${stats.rolls}</p>
+        <p><b>Wish Slots:</b> ${stats.w_slots}</p>
+        <p><b>Wish Boost:</b> ${stats.w_boost}%</p>
+        <p><b>Star Wish Slots:</b> ${stats.sw_slots}</p>
+        <p><b>Star Wish Boost:</b> ${stats.sw_boost}%</p>
+        <p><b>Cards Claimed:</b> ${stats.cards_claimed}</p>
       `;
+
       oddsLabel.innerHTML = `
-          <h3 class>Odds</h3>
-          <p><b>Specific Roll Odds:</b> ${(odds.specific_roll_odds * 100).toFixed(5)}%</p>
-          <p><b>Specific Wish Odds:</b> ${(odds.specific_wish_odds * 100).toFixed(5)}%</p>
-          <p><b>Total Wish Odds:</b> ${(odds.wish_odds * 100).toFixed(5)}%</p>
-          <p><b>Star Wish Odds:</b> ${(odds.star_wish_odds * 100).toFixed(5)}%</p>
-          <p><b>Total per-roll wish hit:</b> ${((odds.wish_odds + odds.star_wish_odds) * 100).toFixed(5)}%</p>
+        <h3>Odds</h3>
+        <p><b>Specific Roll Odds:</b> ${(odds.specific_roll_odds * 100).toFixed(5)}%</p>
+        <p><b>Specific Wish Odds:</b> ${(odds.specific_wish_odds * 100).toFixed(5)}%</p>
+        <p><b>Total Wish Odds:</b> ${(odds.wish_odds * 100).toFixed(5)}%</p>
+        <p><b>Star Wish Odds:</b> ${(odds.star_wish_odds * 100).toFixed(5)}%</p>
+        <p><b>Kakera Spawn Odds:</b> ${(odds.kspawn_odds * 100).toFixed(5)}%</p>
       `;
-
-      updateChart({ baseStats, baseWithoutDisabledStats, upgradedStats: stats });
+    })
+    .catch((err) => {
+      console.error("Fetch error:", err);
+      alert("Could not reach the backend. Make sure the FastAPI server is running on 127.0.0.1:8000.");
     });
+});
+
+
 
     var MC = document.getElementsByClassName('desktop-icon-container')[0];
     var MG = document.getElementsByClassName('desktop-icon-container')[1];
@@ -476,3 +401,4 @@ function dragElement(elmnt) {
   </script>
 </body>
 </html>
+
